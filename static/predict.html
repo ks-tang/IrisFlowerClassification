@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width", initial-scale="1.0">
+    <title>Iris Prediction</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="container" id="predict">
+        <h1>Predict Iris Variety</h1>
+        <!--Formulaire pour le input-->
+        <form onsubmit="submitForm(event)">
+            <label for="sepal_length">Sepal Length (cm):</label>
+            <input type="number" step=0.1 id="sepal_length" name="sepal_length" required>
+
+            <label for="sepal_width">Sepal Width (cm):</label>
+            <input type="number" step=0.1 id="sepal_width" name="sepal_width" required>
+
+            <label for="petal_length">Petal Length (cm):</label>
+            <input type="number" step=0.1 id="petal_length" name="petal_length" required>
+
+            <label for="petal_width">Petal Width (cm):</label>
+            <input type="number" step=0.1 id="petal_width" name="petal_width" required>
+
+            <button type="submit" class="button">Predict</button>
+        </form>
+
+        <!--Balise pour mettre le résultat-->
+        <div id="prediction"></div>
+    </div>
+
+    <script>
+        async function submitForm(event) {
+            event.preventDefault();
+
+            const formData = new FormData(event.target);
+
+            const data = new URLSearchParams();
+            for (const [key, value] of formData.entries()) {
+                data.append(key, value);
+            }
+
+            // Envoie les données à FastAPI via une requete post
+            const response = await fetch("/predict", {
+                method: "POST",
+                body: data
+            });
+
+            // Recevoir la reponse JSON et afficher le resultat
+            const result = await response.json();
+            document.getElementById("prediction").innerText = "Predicted Variety : " + result.prediction;
+        }
+    </script>
+</body>
+</html>
